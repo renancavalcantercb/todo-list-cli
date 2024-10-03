@@ -6,14 +6,14 @@ pipeline {
     }
 
     parameters {
-        string(name: 'VERSION_TAG', defaultValue: 'patch', description: 'Bump version (patch, minor, major)')
+        string(name: 'VERSION_NUMBER', description: 'Version number to bump to')
     }
 
     stages {
-        stage('Bump Version') {
+        stage('Set Version') {
             steps {
                 script {
-                    sh "bump2version ${VERSION_TAG}"
+                    sh "bump2version --new-version ${VERSION_NUMBER} --allow-dirty"
                 }
             }
         }
