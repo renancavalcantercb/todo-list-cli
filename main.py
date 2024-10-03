@@ -50,6 +50,28 @@ def remove_task(identifier: str):
         typer.echo(f"No task found with title or id '{identifier}'")
 
 
+def check_task(identifier: str):
+    """Check a task as done"""
+    create_todo_file()
+
+    with open(TODO_FILE, "r") as file:
+        data = json.load(file)
+
+    found = False
+    for task in data:
+        if task["title"] == identifier or str(task["id"]) == identifier:
+            task["done"] = True
+            found = True
+            break
+
+    if found:
+        with open(TODO_FILE, "w") as file:
+            json.dump(data, file, indent=4)
+        typer.echo(f"Task '{identifier}' checked!")
+    else:
+        typer.echo(f"No task found with title or id '{identifier}'")
+
+
 def list_tasks():
     """List all tasks"""
     create_todo_file()
@@ -69,7 +91,7 @@ def list_tasks():
 def interactive_shell():
     """Enter an interactive mode"""
     typer.echo(
-        "Welcome to the todo CLI! Type commands (add, remove, list) or 'exit' to quit."
+        "Welcome to the todo CLI! Type commands (add, remove, check or list) or 'exit' to quit."
     )
 
     while True:
@@ -82,6 +104,10 @@ def interactive_shell():
             elif command.startswith("add "):
                 title = command[4:]
                 add_task(title)
+
+            elif command.startswith("check "):
+                identifier = command[6:]
+                check_task(identifier)
 
             elif command.startswith("remove "):
                 identifier = command[7:]
