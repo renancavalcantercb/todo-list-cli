@@ -13,7 +13,7 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    sh "bump2version --new-version ${VERSION_NUMBER} --allow-dirty"
+                    sh "bump2version --new-version ${VERSION_NUMBER} --allow-dirty --no-tag --commit"
                 }
             }
         }
