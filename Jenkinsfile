@@ -6,14 +6,16 @@ pipeline {
     }
 
     parameters {
-        string(name: 'VERSION_NUMBER', description: 'Version number to bump to')
+        string(name: 'CURRENT_VERSION', description: 'Current version (e.g., 0.5.1)')
+        choice(name: 'VERSION_PART', choices: ['patch', 'minor', 'major'], description: 'Choose which part of the version to bump')
+        string(name: 'NEW_VERSION', description: 'New version number (e.g., 0.6.0)')
     }
 
     stages {
         stage('Set Version') {
             steps {
                 script {
-                    sh "bump2version --new-version ${VERSION_NUMBER} --allow-dirty --no-tag --commit"
+                    sh "bump2version --current-version ${CURRENT_VERSION} ${VERSION_PART} setup.py"
                 }
             }
         }
