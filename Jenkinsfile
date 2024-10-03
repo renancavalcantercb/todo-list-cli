@@ -5,7 +5,19 @@ pipeline {
         PYPI_TOKEN = credentials('pypi_token')
     }
 
+    parameters {
+        string(name: 'VERSION_TAG', defaultValue: 'patch', description: 'Bump version (patch, minor, major)')
+    }
+
     stages {
+        stage('Bump Version') {
+            steps {
+                script {
+                    sh "bump2version ${VERSION_TAG}"
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
