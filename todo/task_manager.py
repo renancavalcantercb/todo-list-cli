@@ -1,5 +1,9 @@
 from .file_utils import load_todo_file, save_todo_file
+from rich.console import Console
+from rich.table import Table
 import typer
+
+console = Console()
 
 
 def find_task(data, identifier):
@@ -63,13 +67,20 @@ def uncheck_task(identifier: str):
 
 
 def list_tasks():
-    """List all tasks"""
+    """List all tasks with enhanced UI"""
     data = load_todo_file()
 
     if data:
-        typer.echo("Todo list:")
+        table = Table(title="Todo List", show_header=True, header_style="bold magenta")
+
+        table.add_column("ID", style="dim", width=6)
+        table.add_column("Title", style="bold", min_width=20)
+        table.add_column("Status", style="bold", justify="center")
+
         for task in data:
-            done_status = "✔" if task["done"] else "✘"
-            typer.echo(f"{task['id']}: {task['title']} - Done: {done_status}")
+            done_status = "[green]✔ Done" if task["done"] else "[red]✘ Not Done"
+            table.add_row(str(task["id"]), task["title"], done_status)
+
+        console.print(table)
     else:
-        typer.echo("No tasks found!")
+        console.print("[bold yellow]No tasks found![/bold yellow]")
