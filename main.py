@@ -72,6 +72,28 @@ def check_task(identifier: str):
         typer.echo(f"No task found with title or id '{identifier}'")
 
 
+def uncheck_task(identifier: str):
+    """Uncheck a task"""
+    create_todo_file()
+
+    with open(TODO_FILE, "r") as file:
+        data = json.load(file)
+
+    found = False
+    for task in data:
+        if task["title"] == identifier or str(task["id"]) == identifier:
+            task["done"] = False
+            found = True
+            break
+
+    if found:
+        with open(TODO_FILE, "w") as file:
+            json.dump(data, file, indent=4)
+        typer.echo(f"Task '{identifier}' unchecked!")
+    else:
+        typer.echo(f"No task found with title or id '{identifier}'")
+
+
 def list_tasks():
     """List all tasks"""
     create_todo_file()
@@ -108,6 +130,10 @@ def interactive_shell():
             elif command.startswith("check "):
                 identifier = command[6:]
                 check_task(identifier)
+
+            elif command.startswith("uncheck "):
+                identifier = command[8:]
+                uncheck_task(identifier)
 
             elif command.startswith("remove "):
                 identifier = command[7:]
