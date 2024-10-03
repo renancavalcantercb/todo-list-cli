@@ -1,152 +1,45 @@
+import sys
 import typer
-import json
-import os
+from todo.interactive_shell import interactive_shell
+from todo.task_manager import (
+    add_task,
+    remove_task,
+    check_task,
+    uncheck_task,
+    list_tasks,
+)
 
 app = typer.Typer()
 
-TODO_FILE = "todo.json"
+
+@app.command()
+def add(title: str):
+    """Add a new task"""
+    add_task(title)
 
 
-def create_todo_file():
-    if not os.path.exists(TODO_FILE):
-        with open(TODO_FILE, "w") as file:
-            json.dump([], file)
-
-
-def add_task(title: str):
-    """Add a new task to the todo list"""
-    create_todo_file()
-
-    with open(TODO_FILE, "r") as file:
-        data = json.load(file)
-
-    data.append({"id": len(data) + 1, "title": title, "done": False})
-
-    with open(TODO_FILE, "w") as file:
-        json.dump(data, file, indent=4)
-
-    typer.echo(f"Task '{title}' added!")
-
-
-def remove_task(identifier: str):
+@app.command()
+def remove(identifier: str):
     """Remove a task by title or id"""
-    create_todo_file()
-
-    with open(TODO_FILE, "r") as file:
-        data = json.load(file)
-
-    found = False
-    for task in data:
-        if task["title"] == identifier or str(task["id"]) == identifier:
-            data.remove(task)
-            found = True
-            break
-
-    if found:
-        with open(TODO_FILE, "w") as file:
-            json.dump(data, file, indent=4)
-        typer.echo(f"Task '{identifier}' removed!")
-    else:
-        typer.echo(f"No task found with title or id '{identifier}'")
+    remove_task(identifier)
 
 
-def check_task(identifier: str):
-    """Check a task as done"""
-    create_todo_file()
-
-    with open(TODO_FILE, "r") as file:
-        data = json.load(file)
-
-    found = False
-    for task in data:
-        if task["title"] == identifier or str(task["id"]) == identifier:
-            task["done"] = True
-            found = True
-            break
-
-    if found:
-        with open(TODO_FILE, "w") as file:
-            json.dump(data, file, indent=4)
-        typer.echo(f"Task '{identifier}' checked!")
-    else:
-        typer.echo(f"No task found with title or id '{identifier}'")
+@app.command()
+def check(identifier: str):
+    """Mark a task as done"""
+    check_task(identifier)
 
 
-def uncheck_task(identifier: str):
-    """Uncheck a task"""
-    create_todo_file()
-
-    with open(TODO_FILE, "r") as file:
-        data = json.load(file)
-
-    found = False
-    for task in data:
-        if task["title"] == identifier or str(task["id"]) == identifier:
-            task["done"] = False
-            found = True
-            break
-
-    if found:
-        with open(TODO_FILE, "w") as file:
-            json.dump(data, file, indent=4)
-        typer.echo(f"Task '{identifier}' unchecked!")
-    else:
-        typer.echo(f"No task found with title or id '{identifier}'")
+@app.command()
+def uncheck(identifier: str):
+    """Mark a task as not done"""
+    uncheck_task(identifier)
 
 
-def list_tasks():
+@app.command()
+def list():
     """List all tasks"""
-    create_todo_file()
-
-    with open(TODO_FILE, "r") as file:
-        data = json.load(file)
-
-    if data:
-        typer.echo("Todo list:")
-        for task in data:
-            done_status = "✔" if task["done"] else "✘"
-            typer.echo(f"{task['id']}: {task['title']} - Done: {done_status}")
-    else:
-        typer.echo("No tasks found!")
-
-
-def interactive_shell():
-    """Enter an interactive mode"""
-    typer.echo(
-        "Welcome to the todo CLI! Type commands (add, remove, check or list) or 'exit' to quit."
-    )
-
-    while True:
-        try:
-            command = input("> ").strip()
-            if command == "exit":
-                typer.echo("Exiting...")
-                break
-
-            elif command.startswith("add "):
-                title = command[4:]
-                add_task(title)
-
-            elif command.startswith("check "):
-                identifier = command[6:]
-                check_task(identifier)
-
-            elif command.startswith("uncheck "):
-                identifier = command[8:]
-                uncheck_task(identifier)
-
-            elif command.startswith("remove "):
-                identifier = command[7:]
-                remove_task(identifier)
-
-            elif command == "list" or command == "ls":
-                list_tasks()
-
-            else:
-                typer.echo(f"Unknown command: {command}")
-        except (KeyboardInterrupt, EOFError):
-            typer.echo("\nExiting...")
-            break
+    list_tasks()
 
 
 @app.command()
@@ -156,4 +49,7 @@ def start_shell():
 
 
 if __name__ == "__main__":
-    app()
+    if len(sys.argv) == 1:
+        interactive_shell()
+    else:
+        app()
