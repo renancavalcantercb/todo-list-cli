@@ -19,7 +19,6 @@ def change_all_tasks(data, status):
     for task in data:
         task["done"] = status
     save_todo_file(data)
-    typer.echo("All tasks checked!")
 
 
 def add_task(title: str):
@@ -52,6 +51,7 @@ def check_task(identifier: str, all_tasks: bool = False):
 
     if all_tasks:
         change_all_tasks(data, True)
+        typer.echo("All tasks checked!")
         return
 
     task = find_task(data, identifier)
@@ -70,6 +70,7 @@ def uncheck_task(identifier: str, all_tasks: bool = False):
 
     if all_tasks:
         change_all_tasks(data, False)
+        typer.echo("All tasks unchecked!")
         return
 
     task = find_task(data, identifier)
