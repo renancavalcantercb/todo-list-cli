@@ -6,9 +6,8 @@ pipeline {
     }
 
     parameters {
-        string(name: 'CURRENT_VERSION', description: 'Current version (e.g., 0.5.1)')
-        choice(name: 'VERSION_PART', choices: ['patch', 'minor', 'major'], description: 'Choose which part of the version to bump')
         string(name: 'NEW_VERSION', description: 'New version number (e.g., 0.6.0)')
+        choice(name: 'VERSION_PART', choices: ['patch', 'minor', 'major'], description: 'Choose which part of the version to bump')
     }
 
     stages {
@@ -25,7 +24,7 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    sh "bump2version --new-version ${NEW_VERSION} setup.py"
+                    sh "sed -i 's/@VERSION/${NEW_VERSION}/g' setup.py"
                 }
             }
         }
