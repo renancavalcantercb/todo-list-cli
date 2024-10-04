@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="todo_list_cli",
-    version="0.1.1",
+    version="@VERSION",
     packages=find_packages(),
     include_package_data=True,
     description="A CLI todo app built with Typer and Rich",
