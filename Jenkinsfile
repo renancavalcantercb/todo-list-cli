@@ -25,7 +25,7 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    sh "bump2version --current-version ${CURRENT_VERSION} ${VERSION_PART} setup.py"
+                    sh "bump2version --new-version ${NEW_VERSION} setup.py"
                 }
             }
         }
