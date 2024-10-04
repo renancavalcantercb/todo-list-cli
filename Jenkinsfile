@@ -12,6 +12,16 @@ pipeline {
     }
 
     stages {
+        stage('Cleanup') {
+            steps {
+                script {
+                    sh 'rm -rf dist/*'
+                    sh 'rm -rf build/*'
+                    sh 'rm -rf *.egg-info'
+                }
+            }
+        }
+
         stage('Set Version') {
             steps {
                 script {
@@ -32,7 +42,6 @@ pipeline {
             steps {
                 script {
                     sh 'pip3 install twine'
-
                     sh 'twine upload dist/* -u __token__ -p $PYPI_TOKEN'
                 }
             }
