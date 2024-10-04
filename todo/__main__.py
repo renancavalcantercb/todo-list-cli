@@ -1,7 +1,7 @@
 import sys
 import typer
-from interactive_shell import interactive_shell
-from task_manager import (
+from .interactive_shell import interactive_shell
+from .task_manager import (
     add_task,
     remove_task,
     check_task,

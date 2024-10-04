@@ -1,5 +1,5 @@
 import typer
-from task_manager import add_task, remove_task, check_task, uncheck_task, list_tasks
+from .task_manager import add_task, remove_task, check_task, uncheck_task, list_tasks
 
 
 def interactive_shell():
