@@ -1,5 +1,5 @@
 import typer
-from .task_manager import add_task, remove_task, check_task, uncheck_task, list_tasks
+from task_manager import add_task, remove_task, check_task, uncheck_task, list_tasks
 
 
 def interactive_shell():
@@ -8,10 +8,9 @@ def interactive_shell():
         "Welcome to the todo CLI! Type commands (add, remove, check, uncheck, list) or 'exit' to quit."
     )
 
-    commands = {
+    commands_with_flags = {"check": check_task, "uncheck": uncheck_task}
+    commands_without_flags = {
         "add": add_task,
-        "check": check_task,
-        "uncheck": uncheck_task,
         "remove": remove_task,
         "list": list_tasks,
         "ls": list_tasks,
@@ -24,14 +23,22 @@ def interactive_shell():
                 typer.echo("Exiting...")
                 break
 
-            cmd, *args = command.split(maxsplit=1)
-            if cmd in commands:
+            cmd, *args = command.split()
+
+            if cmd in commands_with_flags:
+                all_flag = "--all" in args
+                task_name = None if all_flag else " ".join(args)
+                commands_with_flags[cmd](identifier=task_name, all_tasks=all_flag)
+
+            elif cmd in commands_without_flags:
                 if args:
-                    commands[cmd](*args)
+                    commands_without_flags[cmd](" ".join(args))
                 else:
-                    commands[cmd]()
+                    commands_without_flags[cmd]()
+
             else:
                 typer.echo(f"Unknown command: {cmd}")
+
         except (KeyboardInterrupt, EOFError):
             typer.echo("\nExiting...")
             break

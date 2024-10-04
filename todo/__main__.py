@@ -1,7 +1,7 @@
 import sys
 import typer
-from todo.interactive_shell import interactive_shell
-from todo.task_manager import (
+from interactive_shell import interactive_shell
+from task_manager import (
     add_task,
     remove_task,
     check_task,
@@ -25,15 +25,19 @@ def remove(identifier: str):
 
 
 @app.command()
-def check(identifier: str):
-    """Mark a task as done"""
-    check_task(identifier)
+def check(
+    identifier: str = typer.Argument(None), all: bool = typer.Option(False, "--all")
+):
+    """Mark a task as done, or all tasks if --all is passed"""
+    check_task(identifier, all_tasks=all)
 
 
 @app.command()
-def uncheck(identifier: str):
-    """Mark a task as not done"""
-    uncheck_task(identifier)
+def uncheck(
+    identifier: str = typer.Argument(None), all: bool = typer.Option(False, "--all")
+):
+    """Unmark a task as done, or all tasks if --all is passed"""
+    uncheck_task(identifier, all_tasks=all)
 
 
 @app.command()

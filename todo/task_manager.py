@@ -1,4 +1,4 @@
-from .file_utils import load_todo_file, save_todo_file
+from file_utils import load_todo_file, save_todo_file
 from rich.console import Console
 from rich.table import Table
 import typer
@@ -12,6 +12,14 @@ def find_task(data, identifier):
         if task["title"] == identifier or str(task["id"]) == identifier:
             return task
     return None
+
+
+def change_all_tasks(data, status):
+    """Change all tasks status"""
+    for task in data:
+        task["done"] = status
+    save_todo_file(data)
+    typer.echo("All tasks checked!")
 
 
 def add_task(title: str):
@@ -38,9 +46,13 @@ def remove_task(identifier: str):
         typer.echo(f"No task found with title or id '{identifier}'")
 
 
-def check_task(identifier: str):
+def check_task(identifier: str, all_tasks: bool = False):
     """Check a task as done"""
     data = load_todo_file()
+
+    if all_tasks:
+        change_all_tasks(data, True)
+        return
 
     task = find_task(data, identifier)
 
@@ -52,9 +64,13 @@ def check_task(identifier: str):
         typer.echo(f"No task found with title or id '{identifier}'")
 
 
-def uncheck_task(identifier: str):
+def uncheck_task(identifier: str, all_tasks: bool = False):
     """Uncheck a task"""
     data = load_todo_file()
+
+    if all_tasks:
+        change_all_tasks(data, False)
+        return
 
     task = find_task(data, identifier)
 
